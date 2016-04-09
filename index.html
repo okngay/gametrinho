@@ -19,13 +19,17 @@ Released under the MIT license: http://jsbin.mit-license.org
   <!-- Compiled and minified JavaScript -->
   <link href="https://cdn.bootcss.com/animate.css/3.5.0/animate.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css" rel="stylesheet">
+
 <style id="jsbin-css">
 body {
   font-family: 'Droid Serif', Arial, serif;
   text-align: center;
-  background: BROWN url(http://i.imgur.com/vRG7BLw.jpg);
+  background: BROWN ;
  color: white;
-    text-shadow: 1px 1px 2px black, 0 0 5px blue, 0 0 5px darkblue;
+   
   font-size: 20px;
    
 }
@@ -250,6 +254,7 @@ body {
  
      <div class="btn green">  Thời Gian: <span id="elapsed-time">00:00</span>  </div> 
         <div class="btn blue" id="replay"> Chơi lại</div>
+              <div class="btn black" id="kyluc">Kỷ lục</div>
        </div>
   </nav>
 <br>
@@ -377,12 +382,40 @@ body {
      localStorage["savingObject"] = JSON.stringify(matchingGame.savingObject);
   }
 
+
+// game over
   function gameover() {
     // stop the timer
+
     clearInterval(matchingGame.timer);
 
     // display the elapsed time in the game over popup
     $(".score").html($("#elapsed-time"));
+
+
+
+ if (matchingGame.elapsedTime < localStorage.diem ) {
+localStorage.setItem("diem", matchingGame.elapsedTime );
+
+localStorage.diem = matchingGame.elapsedTime;
+//alert(localStorage.diem);
+swal("Kỷ lục mới:  "+ matchingGame.elapsedTime +" giây!","...","success");
+ //alert("------- Kỷ lục mới!!! -------- \nThời gian hoàn thành: " + matchingGame.elapsedTime +" giây!");
+ setTimeout(function(){ history.go(0); }, 3000);
+ } else {
+//  alert(localStorage.diem);
+      //alert("Thời gian hoàn thành: " + matchingGame.elapsedTime +" giây! \n \nCố gắng phá kỷ lục : "+ localStorage.diem +" giây nhé :)" );
+     swal("Thời gian hoàn thành: " + matchingGame.elapsedTime +" giây!","...","success");
+
+      
+     setTimeout(function(){ history.go(0); }, 3000);
+ }
+
+
+  
+
+
+    
 
     // load the saved last score and save time from local storage
     var lastScore = localStorage.getItem("last-score");
@@ -425,12 +458,13 @@ body {
     localStorage.setItem("last-score", JSON.stringify(obj));
 
     // show the game over popup
-    $("#popup").removeClass("hide");
+   // $("#popup").removeClass("hide");
 
     // Ribbon
-    if (lastElapsedTime === 0 || matchingGame.elapsedTime < lastElapsedTime) {
-      $(".ribbon").removeClass("hide");
-    }
+  //  if (lastElapsedTime === 0 || matchingGame.elapsedTime < lastElapsedTime) {
+  //    $(".ribbon").removeClass("hide");
+  //  }
+ 
 
     //at last, we clear the saved savingObject
     localStorage.removeItem("savingObject");
@@ -438,7 +472,6 @@ body {
 
   function countTimer() {
     matchingGame.elapsedTime++;
-
     // save the current elapsed time into savingObject.
     matchingGame.savingObject.currentElapsedTime =
     matchingGame.elapsedTime;
@@ -472,8 +505,17 @@ body {
   $(document).ready(function(){
 
 
+
+ if (!localStorage.best) {
+          localStorage.setItem("diem", 999);
+            localStorage.best = true; // The option initialization.
+        }
+$("#kyluc").text('Kỷ lục: '+localStorage.diem+" giây");
      
 $("#replay").click(function() {
+
+   
+
   history.go(0);  });
     
     // reset the elapsed time to 0.
